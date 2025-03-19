@@ -76,7 +76,6 @@ request_timestamps = []
 token_counts = []
 request_timestamps_day = []
 token_counts_day = []
-all_banlance = []
 
 # 数据锁，用于保护共享数据结构的并发访问
 data_lock = threading.Lock()
@@ -506,6 +505,7 @@ def index():
 
     # 并发获取所有密钥的余额信息
     key_balances = []
+    all_banlance = []
     all_keys = list(chain(*key_status.values()))
     with concurrent.futures.ThreadPoolExecutor(max_workers=10000) as executor:
         future_to_key = {executor.submit(get_credit_summary, key): key for key in all_keys}
