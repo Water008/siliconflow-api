@@ -95,7 +95,6 @@ def get_credit_summary(api_key):
             data = response.json().get("data", {})
             total_balance = data.get("totalBalance", 0)
             logging.info(f"获取额度，API Key：{api_key}，当前额度: {total_balance}")
-            all_banlance.append(float(total_balance))
             return {"total_balance": float(total_balance)}
         except requests.exceptions.Timeout as e:
             logging.error(
@@ -516,6 +515,7 @@ def index():
                 credit_summary = future.result()
                 balance = credit_summary.get("total_balance") if credit_summary else "获取失败"
                 key_balances.append({"key": obfuscate_key(key), "balance": balance})
+                all_banlance.append(float(balance))
             except Exception as exc:
                 logging.error(f"获取 KEY {obfuscate_key(key)} 余额信息失败: {exc}")
                 key_balances.append({"key": obfuscate_key(key), "balance": "获取失败"})
