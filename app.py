@@ -518,9 +518,10 @@ def index():
                 logging.error(f"获取 KEY {obfuscate_key(key)} 余额信息失败: {exc}")
                 key_balances.append({"key": obfuscate_key(key), "balance": "获取失败"})
 
+    total_banlances = sum(key_balances.balance)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return render_template('index.html', rpm=rpm, tpm=tpm, rpd=rpd, tpd=tpd, key_balances=key_balances,
-                           now=now)
+                           now=now, total_banlances=total_banlances)
 
 # 去除了 /env_test 路由
 
