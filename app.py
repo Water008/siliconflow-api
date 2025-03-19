@@ -76,6 +76,7 @@ request_timestamps = []
 token_counts = []
 request_timestamps_day = []
 token_counts_day = []
+all_banlance = []
 
 # 数据锁，用于保护共享数据结构的并发访问
 data_lock = threading.Lock()
@@ -94,6 +95,7 @@ def get_credit_summary(api_key):
             data = response.json().get("data", {})
             total_balance = data.get("totalBalance", 0)
             logging.info(f"获取额度，API Key：{api_key}，当前额度: {total_balance}")
+            all_banlance.append(float(total_balance))
             return {"total_balance": float(total_balance)}
         except requests.exceptions.Timeout as e:
             logging.error(
@@ -518,7 +520,7 @@ def index():
                 logging.error(f"获取 KEY {obfuscate_key(key)} 余额信息失败: {exc}")
                 key_balances.append({"key": obfuscate_key(key), "balance": "获取失败"})
 
-    total_banlances = sum(key_balances.balance)
+    total_banlances = sum(all_banlance)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return render_template('index.html', rpm=rpm, tpm=tpm, rpd=rpd, tpd=tpd, key_balances=key_balances,
                            now=now, total_banlances=total_banlances)
