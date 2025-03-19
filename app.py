@@ -505,7 +505,6 @@ def index():
 
     # 并发获取所有密钥的余额信息
     key_balances = []
-    all_banlance = []
     all_keys = list(chain(*key_status.values()))
     with concurrent.futures.ThreadPoolExecutor(max_workers=10000) as executor:
         future_to_key = {executor.submit(get_credit_summary, key): key for key in all_keys}
@@ -515,15 +514,13 @@ def index():
                 credit_summary = future.result()
                 balance = credit_summary.get("total_balance") if credit_summary else "获取失败"
                 key_balances.append({"key": obfuscate_key(key), "balance": balance})
-                all_banlance.append(float(balance))
             except Exception as exc:
                 logging.error(f"获取 KEY {obfuscate_key(key)} 余额信息失败: {exc}")
                 key_balances.append({"key": obfuscate_key(key), "balance": "获取失败"})
 
-    total_banlances = sum(all_banlance)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return render_template('index.html', rpm=rpm, tpm=tpm, rpd=rpd, tpd=tpd, key_balances=key_balances,
-                           now=now, total_banlances=total_banlances)
+                           now=now)
 
 # 去除了 /env_test 路由
 
