@@ -154,6 +154,7 @@
   <div class="container mt-5">
     <h1 class="text-center">API Proxy Dashboard</h1>
     <p class="lead text-center">实时监控您的 API 代理服务状态</p>
+
     <!-- 实时性能指标 -->
     <section class="dashboard-section">
       <h2><i class="bi bi-speedometer2"></i> 实时性能指标</h2>
@@ -178,18 +179,10 @@
         </div>
       </div>
     </section>
+
     <!-- API 密钥余额 -->
     <section class="dashboard-section">
       <h2><i class="bi bi-key-fill"></i> API 密钥余额</h2>
-      <!-- 新增：密钥数量和总余额 -->
-      <div class="mb-3 text-muted">
-        <p class="mb-1">
-          已加载密钥数: <span class="badge bg-secondary">{{ key_balances|length if key_balances else 0 }}</span>
-        </p>
-        <p class="mb-0">
-          总计余额: <span class="badge bg-success">{{ key_balances|sum(attribute='balance') if key_balances else 0 }}</span>
-        </p>
-      </div>
       <div class="table-responsive">
         <table class="table key-balances-table">
           <thead>
@@ -214,10 +207,12 @@
         </table>
       </div>
     </section>
+
     <div class="footer">
       <p>Dashboard created at {{ now }} &middot; Powered by <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a></p>
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
