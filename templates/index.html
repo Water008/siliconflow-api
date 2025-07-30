@@ -93,39 +93,20 @@
       padding: 0.5rem 0.75rem;
       border-radius: 0.5rem;
     }
-    /* 表格样式 */
-    .key-balances-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      border: 1px solid #e8e8e8;
-      border-radius: 8px;
-      overflow: hidden;
+    /* 密钥卡片样式 */
+    .key-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+      padding: 1.2rem 1rem;
+      margin-bottom: 1.5rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+      transition: transform .2s;
     }
-    .key-balances-table th,
-    .key-balances-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #ecf0f1;
-      font-size: 0.95rem;
-    }
-    .key-balances-table thead {
-      background-color: #ecf0f1;
-    }
-    .key-balances-table th {
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: #2c3e50;
-    }
-    .key-balances-table tbody tr:nth-child(even) {
-      background-color: #f8f9fa;
-    }
-    .key-balances-table tbody tr:hover {
-      background-color: #f1f3f5;
-    }
-    .text-break {
-      word-break: break-word;
+    .key-card:hover {
+      transform: translateY(-3px);
     }
     /* 页脚样式 */
     .footer {
@@ -180,31 +161,22 @@
       </div>
     </section>
 
-    <!-- API 密钥余额 -->
+    <!-- API 密钥 -->
     <section class="dashboard-section">
-      <h2><i class="bi bi-key-fill"></i> API 密钥余额</h2>
-      <div class="table-responsive">
-        <table class="table key-balances-table">
-          <thead>
-            <tr>
-              <th>API 密钥 (已打码)</th>
-              <th>余额</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for key_balance in key_balances %}
-            <tr>
-              <td class="text-break">{{ key_balance.key }}</td>
-              <td>{{ key_balance.balance }}</td>
-            </tr>
-            {% endfor %}
-            {% if not key_balances %}
-            <tr>
-              <td colspan="2">没有可用的 API 密钥信息。</td>
-            </tr>
-            {% endif %}
-          </tbody>
-        </table>
+      <h2><i class="bi bi-key-fill"></i> API 密钥</h2>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+        {% for key_balance in key_balances %}
+        <div class="col">
+          <div class="key-card">
+            {{ key_balance.key }}
+          </div>
+        </div>
+        {% endfor %}
+        {% if not key_balances %}
+        <div class="col-12">
+          <p class="text-muted text-center">没有可用的 API 密钥信息。</p>
+        </div>
+        {% endif %}
       </div>
     </section>
 
