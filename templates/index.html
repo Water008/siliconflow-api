@@ -95,10 +95,11 @@
     }
     /* 密钥卡片样式 */
     .key-card {
+      position: relative;
       background: #fff;
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,.05);
-      padding: 1.2rem 1rem;
+      padding: 1.2rem 1rem 1.2rem;
       margin-bottom: 1.5rem;
       font-family: 'Courier New', Courier, monospace;
       font-size: 0.9rem;
@@ -107,6 +108,23 @@
     }
     .key-card:hover {
       transform: translateY(-3px);
+    }
+    /* 鼠标悬停时顶部出现的彩色条 */
+    .key-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: #3f51b5; /* 与上方卡片 hover 颜色一致 */
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .key-card:hover::before {
+      opacity: 1;
     }
     /* 页脚样式 */
     .footer {
@@ -163,7 +181,7 @@
 
     <!-- API 密钥 -->
     <section class="dashboard-section">
-      <h2><i class="bi bi-key-fill"></i> API 密钥</h2>
+      <h2><i class="bi bi-key-fill"></i> API 密钥 (共 {{ key_balances|length }} 个)</h2>
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
         {% for key_balance in key_balances %}
         <div class="col">
