@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Proxy Dashboard</title>
-  <!-- 引入 Bootstrap 5 与 Bootstrap Icons -->
+  <title>API Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- 引入 Google Fonts: Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* 基本样式 */
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #f5f7fa, #e9eff5);
@@ -25,7 +23,7 @@
     }
     h1 {
       font-weight: 700;
-      color: #3f51b5; /* Material Indigo 500 */
+      color: #3f51b5; 
       text-align: center;
       margin-bottom: 0.6em;
       letter-spacing: -0.5px;
@@ -35,7 +33,6 @@
       font-size: 1.2rem;
       color: #606c76;
     }
-    /* Dashboard Section 样式 */
     .dashboard-section {
       background-color: #fff;
       border-radius: 12px;
@@ -55,45 +52,6 @@
       padding-bottom: 10px;
       border-bottom: 2px solid #e0e0e0;
     }
-    /* 卡片样式 */
-    .metrics-card {
-      background-color: #fff;
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      padding: 25px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .metrics-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
-      border-top: 3px solid #3f51b5;
-    }
-    .card-title {
-      display: flex;
-      align-items: center;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #37474f;
-      margin-bottom: 1.2rem;
-    }
-    .card-title i {
-      margin-right: 8px;
-      font-size: 1.3rem;
-      color: #8e44ad;
-    }
-    .metrics-card p {
-      font-size: 1rem;
-      margin-bottom: 0.8rem;
-    }
-    .badge {
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.5rem;
-    }
-    /* 密钥卡片样式 */
     .key-card {
       position: relative;
       background: #fff;
@@ -110,7 +68,6 @@
     .key-card:hover {
       transform: translateY(-3px);
     }
-    /* 鼠标悬停时顶部出现的彩色条 */
     .key-card::before {
       content: '';
       position: absolute;
@@ -118,7 +75,7 @@
       left: 0;
       right: 0;
       height: 3px;
-      background-color: #3f51b5; 
+      background-color: #3f51b5;
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
       opacity: 0;
@@ -127,7 +84,6 @@
     .key-card:hover::before {
       opacity: 1;
     }
-    /* 页脚样式 */
     .footer {
       text-align: center;
       padding: 20px 0;
@@ -143,46 +99,18 @@
     .footer a:hover {
       color: #2c3e50;
     }
-    /* 响应式调节 */
     @media (max-width: 576px) {
       h1 { font-size: 1.8rem; }
-      .card-title { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="container mt-5">
-    <h1 class="text-center">API Proxy Dashboard</h1>
-    <p class="lead text-center">实时监控您的 API 代理服务状态</p>
+    <h1 class="text-center">API Dashboard</h1>
+    <p class="lead text-center">Enjoy the LLMs!</p>
 
-    <!-- 实时性能指标 -->
     <section class="dashboard-section">
-      <h2><i class="bi bi-speedometer2"></i> 实时性能指标</h2>
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card metrics-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-lightning-fill"></i> 请求速率</h5>
-              <p>每分钟请求数 (RPM): <span class="badge bg-primary">{{ rpm }}</span></p>
-              <p>每日请求数 (RPD): <span class="badge bg-secondary">{{ rpd }}</span></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card metrics-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-graph-up-arrow"></i> Token 使用量</h5>
-              <p>每分钟 Token 数 (TPM): <span class="badge bg-success">{{ tpm }}</span></p>
-              <p>每日 Token 数 (TPD): <span class="badge bg-info">{{ tpd }}</span></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- API 密钥 -->
-    <section class="dashboard-section">
-      <h2><i class="bi bi-key-fill"></i> API 密钥 (共 {{ key_balances|length }} 个)</h2>
+      <h2><i class="bi bi-key-fill"></i> API Keys (Total {{ key_balances|length }} )</h2>
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
         {% for key_balance in key_balances %}
         <div class="col">
@@ -193,7 +121,7 @@
         {% endfor %}
         {% if not key_balances %}
         <div class="col-12">
-          <p class="text-muted text-center">没有可用的 API 密钥信息。</p>
+          <p class="text-muted text-center">No API Keys</p>
         </div>
         {% endif %}
       </div>
