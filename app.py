@@ -1,4 +1,10 @@
-import os, time, logging, json, uuid, threading, requests
+import os
+import time
+import logging
+import json
+import uuid
+import threading
+import requests
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify, Response, render_template
@@ -40,7 +46,6 @@ def refresh_models():
         logging.warning("没有可用 key，无法拉取模型列表")
         text_models = []
         return
-    # 用第一个 key 拉模型
     key = all_keys[0]
     try:
         resp = requests.get(
@@ -78,7 +83,7 @@ def index():
     with data_lock:
         rpm, tpm = len(request_timestamps), sum(token_counts)
         rpd, tpd = len(request_timestamps_day), sum(token_counts_day)
-    key_balances = [{"key": k[:6] + "*" * 8 + k[-4:], "balance": "-"} for k in all_keys]
+    key_balances = [{"key": "*" * 10 + k[-6:], "balance": "-"} for k in all_keys]
     return render_template("index.html", rpm=rpm, tpm=tpm, rpd=rpd, tpd=tpd,
                            key_balances=key_balances, now=now)
 
@@ -100,14 +105,22 @@ def list_models():
 def chat_completions():
     if not check_auth(request):
         return jsonify({"error": "Unauthorized"}), 401
+
     data = request.get_json()
     model = data.get("model")
     if model not in text_models:
         return jsonify({"error": "Invalid model"}), 400
+
+    # 1. 默认 max_tokens = 32000
+    if "max_tokens" not in data:
+        data["max_tokens"] = 32000
+
     key = select_key(model)
     if not key:
         return jsonify({"error": "No available key"}), 429
+
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+
     try:
         resp = requests.post(
             TARGON_CHAT,
@@ -118,20 +131,50 @@ def chat_completions():
         )
         if resp.status_code == 429:
             return jsonify(resp.json()), 429
+
         if data.get("stream"):
             def gen():
+                total_tokens = 0
+                buffer = b""
                 for chunk in resp.iter_content(chunk_size=2048):
+                    buffer += chunk
                     yield chunk
+                # 解析最后一个 chunk
+                try:
+                    # 找到最后一个 data: {...} 块
+                    lines = buffer.decode("utf-8").strip().splitlines()
+                    for line in reversed(lines):
+                        if line.startswith("data: "):
+                            payload = line[6:]
+                            if payload == "[DONE]":
+                                continue
+                            js = json.loads(payload)
+                            total_tokens = js.get("usage", {}).get("total_tokens", 0)
+                            break
+                except Exception:
+                    total_tokens = 0
+
                 with data_lock:
-                    request_timestamps.append(time.time())
-                    request_timestamps_day.append(time.time())
+                    now_ts = time.time()
+                    request_timestamps.append(now_ts)
+                    request_timestamps_day.append(now_ts)
+                    token_counts.append(total_tokens)
+                    token_counts_day.append(total_tokens)
+
             return Response(gen(), content_type="text/event-stream")
         else:
             js = resp.json()
+            total_tokens = js.get("usage", {}).get("total_tokens", 0)
+
             with data_lock:
-                request_timestamps.append(time.time())
-                request_timestamps_day.append(time.time())
+                now_ts = time.time()
+                request_timestamps.append(now_ts)
+                request_timestamps_day.append(now_ts)
+                token_counts.append(total_tokens)
+                token_counts_day.append(total_tokens)
+
             return jsonify(js)
+
     except Exception as e:
         logging.error(f"转发失败: {e}")
         return jsonify({"error": str(e)}), 500
