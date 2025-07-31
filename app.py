@@ -92,7 +92,7 @@ def chat_completions():
         return jsonify({"error": "Invalid model"}), 400
 
     if "max_tokens" not in data:
-        data["max_tokens"] = 4096
+        data["max_tokens"] = 0
 
     key = select_key(model)
     if not key:
